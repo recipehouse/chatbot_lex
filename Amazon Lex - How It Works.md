@@ -1,5 +1,9 @@
 # Amazon Lex: How It Works
 
+For the commands: In Unix, macOS Change $LATEST to ^\\$LATEST, '^' to '\\'
+
+
+
 Amazon Lex enables you to build applications using a speech or text interface powered by the same technology that powers Amazon Alexa. Following are the typical steps you perform when working with Amazon Lex:
 
 1. Create a bot and configure it with one or more intents that you want to support. Configure the bot so it understands the user's goal (intent), engages in conversation with the user to elicit information, and fulfills the user's intent.
@@ -156,6 +160,107 @@ For more information, see [Using Lambda Functions](https://docs.aws.amazon.com/l
 
 
 
+# Service Permissions
+
+Amazon Lex uses AWS Identity and Access Management (IAM)[ service-linked roles](https://docs.aws.amazon.com/console/iam/service-linked-role). Amazon Lex assumes these roles to call AWS services on behalf of your bots and bot channels. The roles exist within your account, but are linked to Amazon Lex use cases and have predefined permissions. Only Amazon Lex can assume these roles, and you can't modify their permissions. You can delete them after deleting their related resources using IAM. This protects your Amazon Lex resources because you can't inadvertently remove necessary permissions.
+
+Amazon Lex uses two IAM service-linked roles:
+
+- **AWSServiceRoleForLexBots**—Amazon Lex uses this service-linked role to invoke Amazon Polly to synthesize speech responses for your bot.
+- **AWSServiceRoleForLexChannels**—Amazon Lex uses this service-linked role to post text to your bot when managing channels.
+
+You don't need to manually create either of these roles. When you create your first bot using the console, Amazon Lex creates the **AWSServiceRoleForLexBots** role for you. When you first associate a bot with a messaging channel, Amazon Lex creates the **AWSServiceRoleForLexChannels** role for you.
+
+## Creating Resource-Based Policies for AWS Lambda
+
+When invoking Lambda functions, Amazon Lex uses resource-based policies. A *resource-based policy* is attached to a resource; it lets you specify who has access to the resource and which actions they can perform on it. This enables you to narrowly scope permissions between Lambda functions and the intents that you have created. It also allows you to see those permissions in a single policy when you manage Lambda functions that have many event sources.
+
+For more information, see [Using Resource-Based Polices for AWS Lambda (Lambda Function Policies)](http://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html) in the *AWS Lambda Developer Guide*.
+
+To create resource-based policies for intents that you associate with a Lambda function, you can use the Amazon Lex console. Or, you can use the AWS command line interface (AWS CLI). In the AWS CLI, use the Lambda [AddPermisssion](http://docs.aws.amazon.com/lambda/latest/dg/API_AddPermission.html) API with the `Principal` field set to`lex.amazonaws.com` and the `SourceArn` set to the ARN of the intent that is allowed to invoke the function.
+
+## Deleting Service-Linked Roles
+
+You can use the IAM console, the IAM CLI, or the IAM API to delete the`AWSServiceRoleForLexBots` and `AWSServiceRoleForLexChannels` service-linked roles. For more information, see [Deleting a Service-Linked Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html#delete-service-linked-role) in the *IAM User Guide*.
+
+#  Getting Started (AWS CLI)
+
+In this step, you use the AWS CLI to create, test, and modify an Amazon Lex bot. To complete these exercises, you need to be familiar with using the CLI and have a text editor. For more information, see [Step 2: Set Up the AWS Command Line Interface](https://docs.aws.amazon.com/lex/latest/dg/gs-set-up-cli.html)
+
+- Exercise 1 — Create and test an Amazon Lex bot. The exercise provides all of the JSON objects that you need to create a custom slot type, an intent, and a bot. For more information, see [Amazon Lex: How It Works](https://docs.aws.amazon.com/lex/latest/dg/how-it-works.html)
+- Exercise 2 — Update the bot that you created in Exercise 1 to add an additional sample utterance. Amazon Lex uses sample utterances to build the machine learning model for your bot.
+- Exercise 3 — Update the bot that you created in Exercise 1 to add a Lambda function to validate user input and to fulfill the intent.
+- Exercise 4 — Publish a version of the slot type, intent, and bot resources that you created in Exercise 1. A version is a snapshot of a resource that can't be changed.
+- Exercise 5 — Create an alias for the bot that you created in Exercise 1.
+- Exercise 6 — Clean up your account by deleting the slot type, intent, and bot that you created in Exercise 1, and the alias that you created in Exercise 5.
+
+
+
+# Create an Amazon Lex Bot (AWS CLI)
+
+In general, when you create bots, you:
+
+1. Create slot types to define the information that your bot will be working with.
+2. Create intents that define the user actions that your bot supports. Use the custom slot types that you created earlier to define the slots, or parameters, that your intent requires.
+3. Create a bot that uses the intents that you defined.
+
+In this exercise you create and test a new Amazon Lex bot using the CLI. Use the JSON structures that we provide to create the bot. To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+# Create a Service-Linked Role (AWS CLI)
+
+Amazon Lex assumes AWS Identity and Access Management service-linked roles to call AWS services on behalf of your bots. The roles, which are in your account, are linked to Amazon Lex use cases and have predefined permissions. For more information, see [Service Permissions](https://docs.aws.amazon.com/lex/latest/dg/howitworks-service-permissions.html).
+
+If you've already created an Amazon Lex bot using the console, the service-linked role was created automatically. Skip to [Step 2: Create a Custom Slot Type (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-create-flower-types.html).
+
+**To create a service-linked role (AWS CLI)**
+
+1. In the AWS CLI, type the following command:
+
+   ```
+   aws iam create-service-linked-role --aws-service-name lex.amazonaws.com
+   ```
+
+2. Check the policy using the following command:
+
+   ```
+   aws iam get-role --role-name AWSServiceRoleForLexBots
+   ```
+
+   The response is:
+
+   ```
+   {
+       "Role": {
+           "AssumeRolePolicyDocument": {
+               "Version": "2012-10-17", 
+               "Statement": [
+                   {
+                       "Action": "sts:AssumeRole", 
+                       "Effect": "Allow", 
+                       "Principal": {
+                           "Service": "lex.amazonaws.com"
+                       }
+                   }
+               ]
+           },
+           "RoleName": "AWSServiceRoleForLexBots", 
+           "Path": "/aws-service-role/lex.amazonaws.com/", 
+           "Arn": "arn:aws:iam::account-id:role/aws-service-role/lex.amazonaws.com/AWSServiceRoleForLexBots"
+   }
+   ```
+
+# Create a Custom Slot Type (AWS CLI)
+
+Create a custom slot type with enumeration values for the flowers that can be ordered. You use this type in the next step when you create the `OrderFlowers` intent. A *slot type* defines the possible values for a slot, or parameter, of the intent.
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+**To create a custom slot type (AWS CLI)**
+
+1. Create a text file named **FlowerTypes.json**. Copy the JSON code from [FlowerTypes.json](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-create-flower-types-json.html)into the text file.
+
+
+
 Call the [PutSlotType](https://docs.aws.amazon.com/lex/latest/dg/API_PutSlotType.html) operation using the AWS CLI to create the slot type. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (^) Unix continuation character at the end of each line with a caret (^).
 
 ```
@@ -204,6 +309,206 @@ Look for the `status` field in the response:
     
 }
 ```
+
+# Create an Intent (AWS CLI)
+
+Create an intent for the `OrderFlowersBot` bot and provide three slots, or parameters. The slots allow the bot to fulfill the intent:
+
+- `FlowerType` is a custom slot type that specifies which types of flowers can be ordered.
+- `AMAZON.DATE` and `AMAZON.TIME` are built-in slot types used for getting the date and time to deliver the flowers from the user.
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+**To create the OrderFlowers intent (AWS CLI)**
+
+1. Create a text file named **OrderFlowers.json**. Copy the JSON code from [OrderFlowers.json](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-create-order-flowers-json.html)into the text file.
+
+2. In the AWS CLI, call the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to create the intent. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (\) Unix continuation character at the end of each line with a caret (^).
+
+   ```
+   aws lex-models put-intent \
+      --region region \
+      --name OrderFlowers \
+      --cli-input-json file://OrderFlowers.json
+   ```
+
+   The server responds with the following:
+
+   ```
+   {
+       "confirmationPrompt": {
+           "maxAttempts": 2, 
+           "messages": [
+               {
+                   "content": "Okay, your {FlowerType} will be ready for pickup by {PickupTime} on {PickupDate}.  Does this sound okay?", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "name": "OrderFlowers", 
+       "checksum": "checksum", 
+       "version": "$LATEST", 
+       "rejectionStatement": {
+           "messages": [
+               {
+                   "content": "Okay, I will not place your order.", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "createdDate": timestamp, 
+       "lastUpdatedDate": timestamp, 
+       "sampleUtterances": [
+           "I would like to pick up flowers", 
+           "I would like to order some flowers"
+       ], 
+       "slots": [
+           {
+               "slotType": "AMAZON.TIME", 
+               "name": "PickupTime", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "Pick up the {FlowerType} at what time on {PickupDate}?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 3, 
+               "description": "The time to pick up the flowers"
+           }, 
+           {
+               "slotType": "FlowerTypes", 
+               "name": "FlowerType", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "What type of flowers would you like to order?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 1, 
+               "slotTypeVersion": "$LATEST", 
+               "sampleUtterances": [
+                   "I would like to order {FlowerType}"
+               ], 
+               "description": "The type of flowers to pick up"
+           }, 
+           {
+               "slotType": "AMAZON.DATE", 
+               "name": "PickupDate", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "What day do you want the {FlowerType} to be picked up?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 2, 
+               "description": "The date to pick up the flowers"
+           }
+       ], 
+       "fulfillmentActivity": {
+           "type": "ReturnIntent"
+       }, 
+       "description": "Intent to order a bouquet of flowers for pick up"
+   }
+   ```
+
+# Create a Bot (AWS CLI)
+
+The `OrderFlowersBot` bot has one intent, the `OrderFlowers` intent that you created in the previous step. To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST`.
+
+**To create the OrderFlowersBot bot (AWS CLI)**
+
+1. Create a text file named **OrderFlowersBot.json**. Copy the JSON code from [OrderFlowersBot.json](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-create-order-flowers-bot-json.html) into the text file.
+
+2. In the AWS CLI, call the [PutBot](https://docs.aws.amazon.com/lex/latest/dg/API_PutBot.html) operation to create the bot. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (\) Unix continuation character at the end of each line with a caret (^).
+
+   ```
+   aws lex-models put-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --cli-input-json file://OrderFlowersBot.json
+   ```
+
+   The response from the server follows. When you create or update bot, the `status` field is set to `BUILDING`. This indicates that the bot isn't ready to use. To determine when the bot is ready for use, use the [GetBot](https://docs.aws.amazon.com/lex/latest/dg/API_GetBot.html) operation in the next step .
+
+   ```
+   {
+       "status": "BUILDING", 
+       "intents": [
+           {
+               "intentVersion": "$LATEST", 
+               "intentName": "OrderFlowers"
+           }
+       ], 
+       "name": "OrderFlowersBot", 
+       "locale": "en-US", 
+       "checksum": "checksum", 
+       "abortStatement": {
+           "messages": [
+               {
+                   "content": "Sorry, I'm not able to assist at this time", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "version": "$LATEST", 
+       "lastUpdatedDate": timestamp, 
+       "createdDate": timestamp, 
+       "clarificationPrompt": {
+           "maxAttempts": 2, 
+           "messages": [
+               {
+                   "content": "I didn't understand you, what would you like to do?", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "voiceId": "Salli", 
+       "childDirected": false, 
+       "idleSessionTTLInSeconds": 600, 
+       "processBehavior": "BUILD",
+       "description": "Bot to order flowers on the behalf of a user"
+   }
+
+   ```
+
+3. To determine if your new bot is ready for use, run the following command. Repeat this command until the `status` field returns `READY`. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (\) Unix continuation character at the end of each line with a caret (^).
+
+   ```
+   aws lex-models get-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --version-or-alias "\$LATEST"
+   ```
+
+   Look for the `status` field in the response:
+
+   ```
+   {
+       "status": "READY", 
+       
+       ...
+       
+   }
+
+   ```
+
+
 
 ###Test text service
 
@@ -342,7 +647,7 @@ Look for the `status` field in the response:
        --region eu-west-1 ^
        --output-format pcm ^
        --text "roses" ^
-       --voice-id "Kendra" 
+       --voice-id "Kendra" ^
        FlowerTypeSpeech.mpg
    ```
 
@@ -350,7 +655,7 @@ Look for the `status` field in the response:
    aws lex-runtime post-content ^
        --region eu-west-1 ^
        --bot-name OrderFlowersBot ^
-       --bot-alias "^$LATEST" ^
+       --bot-alias "$LATEST" ^
        --user-id UserOne ^
        --content-type "audio/l16; rate=16000; channels=1" ^
        --input-stream FlowerTypeSpeech.mpg ^
@@ -364,7 +669,7 @@ Look for the `status` field in the response:
        --region eu-west-1 ^
        --output-format pcm ^
        --text "tuesday" ^
-       --voice-id "Kendra" 
+       --voice-id "Kendra" ^
        DateSpeech.mpg
    ```
 
@@ -372,10 +677,10 @@ Look for the `status` field in the response:
    aws lex-runtime post-content ^
        --region eu-west-1 ^
        --bot-name OrderFlowersBot ^
-       --bot-alias "^$LATEST" ^
+       --bot-alias "$LATEST" ^
        --user-id UserOne ^
        --content-type "audio/l16; rate=16000; channels=1" ^
-       --input-stream DateSpeech.mpg 
+       --input-stream DateSpeech.mpg ^
        DateOutputSpeech.mpg
    ```
 
@@ -386,7 +691,7 @@ Look for the `status` field in the response:
        --region eu-west-1 ^
        --output-format pcm ^
        --text "10:00 a.m." ^
-       --voice-id "Kendra" 
+       --voice-id "Kendra" ^
        TimeSpeech.mpg
    ```
 
@@ -394,10 +699,10 @@ Look for the `status` field in the response:
    aws lex-runtime post-content ^
        --region eu-west-1 ^
        --bot-name OrderFlowersBot ^
-       --bot-alias "^$LATEST" ^
+       --bot-alias "$LATEST" ^
        --user-id UserOne ^
        --content-type "audio/l16; rate=16000; channels=1" ^
-       --input-stream TimeSpeech.mpg 
+       --input-stream TimeSpeech.mpg ^
        TimeOutputSpeech.mpg
    ```
 
@@ -408,7 +713,7 @@ Look for the `status` field in the response:
        --region eu-west-1 ^
        --output-format pcm ^
        --text "yes" ^
-       --voice-id "Kendra" 
+       --voice-id "Kendra" ^
        ConfirmSpeech.mpg
    ```
 
@@ -416,7 +721,7 @@ Look for the `status` field in the response:
    aws lex-runtime post-content ^
        --region eu-west-1 ^
        --bot-name OrderFlowersBot ^
-       --bot-alias "^$LATEST" ^
+       --bot-alias "$LATEST" ^
        --user-id UserOne ^
        --content-type "audio/l16; rate=16000; channels=1" ^
        --input-stream ConfirmSpeech.mpg ^
@@ -436,5 +741,227 @@ Look for the `status` field in the response:
            "PickupTime": "10:00", 
            "FlowerType": "roses"
        }
+   }
+   ```
+
+# Exercise 2: Add a New Utterance (AWS CLI)
+
+To improve the machine learning model that Amazon Lex uses to recognize requests from your users, add another sample utterance to the bot.
+
+Adding a new utterance is a four-step process.
+
+1. Use the [GetIntent](https://docs.aws.amazon.com/lex/latest/dg/API_GetIntent.html) operation to get an intent from Amazon Lex.
+2. Update the intent.
+3. Use the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to send the updated intent back to Amazon Lex.
+4. Use the [GetBot](https://docs.aws.amazon.com/lex/latest/dg/API_GetBot.html) and [PutBot](https://docs.aws.amazon.com/lex/latest/dg/API_PutBot.html) operations to rebuild any bot that uses the intent.
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+The response from the `GetIntent` operation contains a field called `checksum` that identifies a specific revision of the intent. You must provide the checksum value when you use the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to update an intent. If you don't, you'll get the following error message:
+
+```
+            An error occurred (PreconditionFailedException) when calling 
+            the PutIntent operation: Intent intent name already exists. 
+            If you are trying to update intent name you must specify the 
+            checksum.
+        
+```
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST` and replace the backslash (\) continuation character at the end of each line with a caret (^).
+
+**To update the OrderFlowers intent (AWS CLI)**
+
+1. In the AWS CLI, get the intent from Amazon Lex. Amazon Lex sends the output to a file called **OrderFlowers-V2.json.**
+
+   ```
+   aws lex-models get-intent ^
+       --region eu-west-1 ^
+       --name OrderFlowers ^
+       --intent-version "$LATEST" > OrderFlowers-V2.json
+   ```
+
+2. Open **OrderFlowers-V2.json** in a text editor.
+
+   1. Find and delete the `createdDate`, `lastUpdatedDate`, and `version` fields.
+
+   2. Add the following to the `sampleUtterances` field:
+
+      ```
+      I want to order flowers
+      ```
+
+   3. Save the file.
+
+3. Send the updated intent to Amazon Lex with the following command:
+
+   ```
+   aws lex-models put-intent  ^
+       --region eu-west-1 ^
+       --name OrderFlowers ^
+       --cli-input-json file://OrderFlowers-V2.json
+   ```
+
+   Amazon Lex sends the following response:
+
+   ```
+   {
+       "confirmationPrompt": {
+           "maxAttempts": 2, 
+           "messages": [
+               {
+                   "content": "Okay, your {FlowerType} will be ready for pickup by {PickupTime} on {PickupDate}.  Does this sound okay?", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "name": "OrderFlowers", 
+       "checksum": "checksum", 
+       "version": "$LATEST", 
+       "rejectionStatement": {
+           "messages": [
+               {
+                   "content": "Okay, I will not place your order.", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "createdDate": timestamp, 
+       "lastUpdatedDate": timestamp, 
+       "sampleUtterances": [
+           "I would like to pick up flowers", 
+           "I would like to order some flowers", 
+           "I want to order flowers"
+       ], 
+       "slots": [
+           {
+               "slotType": "AMAZON.TIME", 
+               "name": "PickupTime", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "Pick up the {FlowerType} at what time on {PickupDate}?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 3, 
+               "description": "The time to pick up the flowers"
+           }, 
+           {
+               "slotType": "FlowerTypes", 
+               "name": "FlowerType", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "What type of flowers would you like to order?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 1, 
+               "slotTypeVersion": "$LATEST", 
+               "sampleUtterances": [
+                   "I would like to order {FlowerType}"
+               ], 
+               "description": "The type of flowers to pick up"
+           }, 
+           {
+               "slotType": "AMAZON.DATE", 
+               "name": "PickupDate", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "What day do you want the {FlowerType} to be picked up?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 2, 
+               "description": "The date to pick up the flowers"
+           }
+       ], 
+       "fulfillmentActivity": {
+           "type": "ReturnIntent"
+       }, 
+       "description": "Intent to order a bouquet of flowers for pick up"
+   }
+   ```
+
+Now that you have updated the intent, rebuild any bot that uses it.
+
+**To rebuild the OrderFlowersBot bot (AWS CLI)**
+
+1. In the AWS CLI, get the definition of the `OrderFlowersBot` bot and save it to a file with the following command:
+
+   ```
+   aws lex-models get-bot ^
+       --region eu-west-1 ^
+       --name OrderFlowersBot ^
+       --version-or-alias "$LATEST" > OrderFlowersBot-V2.json
+   ```
+
+2. In a text editor, open **OrderFlowersBot-V2.json**. Remove the `createdDate`, `lastUpdatedDate`, `status` and `version` fields.
+
+3. In a text editor, add the following line to the bot definition:
+
+   ```
+   "processBehavior": "BUILD",
+   ```
+
+4. In the AWS CLI, build a new revision of the bot by running the following command to :
+
+   ```
+   aws lex-models put-bot ^
+       --region eu-west-1 ^
+       --name OrderFlowersBot ^
+       --cli-input-json file://OrderFlowersBot-V2.json
+   ```
+
+   The response from the server is:
+
+   ```
+   {
+       "status": "BUILDING", 
+       "intents": [
+           {
+               "intentVersion": "$LATEST", 
+               "intentName": "OrderFlowers"
+           }
+       ], 
+       "name": "OrderFlowersBot", 
+       "locale": "en-US", 
+       "checksum": "checksum", 
+       "abortStatement": {
+           "messages": [
+               {
+                   "content": "Sorry, I'm not able to assist at this time", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "version": "$LATEST", 
+       "lastUpdatedDate": timestamp, 
+       "createdDate": timestamp 
+       "clarificationPrompt": {
+           "maxAttempts": 2, 
+           "messages": [
+               {
+                   "content": "I didn't understand you, what would you like to do?", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "voiceId": "Salli", 
+       "childDirected": false, 
+       "idleSessionTTLInSeconds": 600, 
+       "description": "Bot to order flowers on the behalf of a user"
    }
    ```
