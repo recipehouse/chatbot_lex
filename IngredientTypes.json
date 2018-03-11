@@ -245,7 +245,7 @@
         },
         {
             "value": "chicken mince"
-        },
+        }
     ],
     "name": "IngredientTypes",
     "description": "Types of ingredients available to select"

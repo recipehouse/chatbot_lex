@@ -1,6 +1,6 @@
 # Amazon Lex: How It Works
 
-For the commands: In Unix, macOS Change $LATEST to ^\\$LATEST, '^' to '\\'
+^^For the commands: In Unix, macOS Change $LATEST to \\\$LATEST, '^' to '\\'
 
 
 
@@ -15,7 +15,6 @@ Before you get started, familiarize yourself with the following Amazon Lex core 
 
 - **Bot** – A bot performs automated tasks such as ordering a pizza, booking a hotel, ordering flowers, and so on. An Amazon Lex bot is powered by Automatic Speech Recognition (ASR) and Natural Language Understanding (NLU) capabilities, the same technology that powers Amazon Alexa.
 
-   
 
   Amazon Lex bots can understand user input provided with text or speech and converse in natural language. You can create Lambda functions and add them as code hooks in your intent configuration to perform user data validation and fulfillment tasks.
 
@@ -23,7 +22,6 @@ Before you get started, familiarize yourself with the following Amazon Lex core 
 
 - **Intent** – An intent represents an action that the user wants to perform. You create a bot to support one or more related intents. For example, you might create a bot that orders pizza and drinks. For each intent, you provide the following required information:
 
-   
 
   - **Intent name**– A descriptive name for the intent. For example, **OrderPizza**.
 
@@ -31,11 +29,10 @@ Before you get started, familiarize yourself with the following Amazon Lex core 
 
   - **How to fulfill the intent** – How you want to fulfill the intent after the user provides the necessary information (for example, place order with a local pizza shop). We recommend that you create a Lambda function to fulfill the intent.
 
-     
 
     You can optionally configure the intent so Amazon Lex simply returns the information back to the client application to do the necessary fulfillment.
 
-     
+​     
 
   In addition to custom intents such as ordering a pizza, Amazon Lex also provides built-in intents to quickly set up your bot. For more information, see [Built-in Intents and Slot Types](https://docs.aws.amazon.com/lex/latest/dg/howitworks-builtins.html).
 
@@ -43,7 +40,6 @@ Before you get started, familiarize yourself with the following Amazon Lex core 
 
 - **Slot** – An intent can require zero or more slots or parameters. You add slots as part of the intent configuration. At runtime, Amazon Lex prompts the user for specific slot values. The user must provide values for all *required* slots before Amazon Lex can fulfill the intent.
 
-   
 
   For example, the `OrderPizza` intent requires slots such as pizza size, crust type, and number of pizzas. In the intent configuration, you add these slots. For each slot, you provide slot type and a prompt for Amazon Lex to send to the client to elicit data from the user. A user can reply with a slot value that includes additional words, such as "large pizza please" or "let's stick with small." Amazon Lex can still understand the intended slot value.
 
@@ -51,12 +47,11 @@ Before you get started, familiarize yourself with the following Amazon Lex core 
 
 - **Slot type** – Each slot has a type. You can create your custom slot types or use built-in slot types. For example, you might create and use the following slot types for the `OrderPizza`intent:
 
-   
 
   - Size – With enumeration values `Small`, `Medium`, and `Large`.
   - Crust – With enumeration values `Thick` and `Thin`.
 
-   
+
 
   Amazon Lex also provides built-in slot types. For example, `AMAZON.NUMBER` is a built-in slot type that you can use for the number of pizzas ordered. For more information, see [Built-in Intents and Slot Types](https://docs.aws.amazon.com/lex/latest/dg/howitworks-builtins.html).
 
@@ -113,7 +108,6 @@ Client applications use the following runtime API operations to communicate with
 
 - [PostContent](https://docs.aws.amazon.com/lex/latest/dg/API_runtime_PostContent.html) – Takes speech or text input and returns intent information and a text or speech message to convey to the user. Currently, Amazon Lex supports the following audio formats:
 
-   
 
   Input audio formats – LPCM and Opus
 
@@ -270,7 +264,19 @@ aws lex-models put-slot-type ^
     --cli-input-json file://FlowerTypes2.json
 ```
 
+# Step 3: Create an Intent (AWS CLI)
 
+Create an intent for the `OrderFlowersBot` bot and provide three slots, or parameters. The slots allow the bot to fulfill the intent:
+
+- `FlowerType` is a custom slot type that specifies which types of flowers can be ordered.
+- `AMAZON.DATE` and `AMAZON.TIME` are built-in slot types used for getting the date and time to deliver the flowers from the user.
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+**To create the OrderFlowers intent (AWS CLI)**
+
+1. Create a text file named **OrderFlowers.json**. Copy the JSON code from [OrderFlowers.json](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-create-order-flowers-json.html)into the text file.
+2. In the AWS CLI, call the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to create the intent. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (\) Unix continuation character at the end of each line with a caret (^).
 
 ```
 aws lex-models put-intent ^
@@ -279,7 +285,17 @@ aws lex-models put-intent ^
    --cli-input-json file://OrderFlowers.json
 ```
 
+# Step 4: Create a Bot (AWS CLI)
 
+The `OrderFlowersBot` bot has one intent, the `OrderFlowers` intent that you created in the previous step. To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST`.
+
+**To create the OrderFlowersBot bot (AWS CLI)**
+
+1. Create a text file named **OrderFlowersBot.json**. Copy the JSON code from [OrderFlowersBot.json](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-create-order-flowers-bot-json.html) into the text file.
 
 In the AWS CLI, call the [PutBot](https://docs.aws.amazon.com/lex/latest/dg/API_PutBot.html) operation to create the bot. The example is formatted for Unix, Linux, and macOS. For Windows, replace the backslash (^) Unix continuation character at the end of each line with a caret (^).
 
@@ -965,3 +981,188 @@ Now that you have updated the intent, rebuild any bot that uses it.
        "description": "Bot to order flowers on the behalf of a user"
    }
    ```
+
+# Exercise 3: Add a Lambda Function (AWS CLI)
+
+Add a Lambda function that validates user input and fulfills the user's intent to the bot.
+
+Adding a Lambda expression is a five-step process.
+
+1. Use the Lambda [AddPermission](http://docs.aws.amazon.com/lambda/latest/dg/API_AddPermission.html) function to enable the `OrderFlowers`intent to call the Lambda [Invoke](http://docs.aws.amazon.com/lambda/latest/dg/lambda-api-permissions-ref.html) operation.
+2. Use the [GetIntent](https://docs.aws.amazon.com/lex/latest/dg/API_GetIntent.html) operation to get the intent from Amazon Lex.
+3. Update the intent to add the Lambda function.
+4. Use the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to send the updated intent back to Amazon Lex.
+5. Use the [GetBot](https://docs.aws.amazon.com/lex/latest/dg/API_GetBot.html) and [PutBot](https://docs.aws.amazon.com/lex/latest/dg/API_PutBot.html) operations to rebuild any bot that uses the intent.
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+If you add a Lambda function to an intent before you add the `InvokeFunction`permission, you get the following error message:
+
+```
+            An error occurred (BadRequestException) when calling the 
+            PutIntent operation: Lex is unable to access the Lambda 
+            function Lambda function ARN in the context of intent 
+            intent ARN.  Please check the resource-based policy on 
+            the function.
+        
+```
+
+The response from the `GetIntent` operation contains a field called `checksum` that identifies a specific revision of the intent. When you use the [PutIntent](https://docs.aws.amazon.com/lex/latest/dg/API_PutIntent.html) operation to update an intent, you must provide the checksum value. If you don't, you get the following error message:
+
+```
+            An error occurred (PreconditionFailedException) when calling 
+            the PutIntent operation: Intent intent name already exists. 
+            If you are trying to update intent name you must specify the 
+            checksum.
+        
+```
+
+This exercise uses the Lambda function from [Exercise 1: Create an Amazon Lex Bot Using a Blueprint (Console)](https://docs.aws.amazon.com/lex/latest/dg/gs-bp.html). For instructions to create the Lambda function, see [Step 3: Create a Lambda Function (Console)](https://docs.aws.amazon.com/lex/latest/dg/gs-bp-create-lambda-function.html).
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST`.
+
+**To add a Lambda function to an intent**
+
+1. In the AWS CLI, add the `InvokeFunction` permission for the `OrderFlowers`intent:
+
+   ```
+   aws lambda add-permission ^
+       --region eu-west-1 ^
+       --function-name OrderFlowersCodeHook ^
+       --statement-id LexGettingStarted-OrderFlowersBot ^
+       --action lambda:InvokeFunction ^
+       --principal lex.amazonaws.com ^
+       --source-arn "arn:aws:lex:eu-west-1:account ID:intent:OrderFlowers:.*"
+   ```
+
+   Lambda sends the following response:
+
+   ```
+   {
+       "Statement": "{\"Sid\":\"LexGettingStarted-OrderFlowersBot\",
+         \"Resource\":\"arn:aws:lambda:region:account ID:function:OrderFlowersCodeHook\",
+         \"Effect\":\"Allow\",
+         \"Principal\":{\"Service\":\"lex.amazonaws.com\"},
+         \"Action\":[\"lambda:InvokeFunction\"],
+         \"Condition\":{\"ArnLike\":
+           {\"AWS:SourceArn\":
+             \"arn:aws:lex:region:account ID:intent:OrderFlowers:*\"}}}"
+   }
+   ```
+
+2. Get the intent from Amazon Lex. Amazon Lex sends the output to a file called **OrderFlowers-V3.json**.
+
+   ```
+   aws lex-models get-intent ^
+       --region region ^
+       --name OrderFlowers ^
+       --intent-version "^$LATEST" > OrderFlowers-V3.json
+
+   ```
+
+3. In a text editor, open the **OrderFlowers-V3.json**.
+
+   1. Find and delete the `createdDate`, `lastUpdatedDate`, and `version`fields.
+
+   2. Update the `fulfillmentActivity` field :
+
+      ```
+          "fulfillmentActivity": {
+              "type": "CodeHook",
+              "codeHook": {
+                  "uri": "arn:aws:lambda:region:account ID:function:OrderFlowersCodeHook",
+                  "messageVersion": "1.0"
+              }
+          }
+      ```
+
+   3. Save the file.
+
+4. In the AWS CLI, send the updated intent to Amazon Lex:
+
+   ```
+   aws lex-models put-intent ^
+       --region region ^
+       --name OrderFlowers ^
+       --cli-input-json file://OrderFlowers-V3.json
+
+   ```
+
+Now that you have updated the intent, rebuild the bot.
+
+**To rebuild the OrderFlowersBot bot**
+
+1. In the AWS CLI, get the definition of the `OrderFlowersBot` bot and save it to a file:
+
+   ```
+   aws lex-models get-bot ^
+       --region region ^
+       --name OrderFlowersBot ^
+       --version-or-alias "\$LATEST" > OrderFlowersBot-V3.json
+
+   ```
+
+2. In a text editor,open **OrderFlowersBot-V3.json**. Remove the `createdDate`, `lastUpdatedDate`, `status`, and `version` fields.
+
+3. In the text editor, add the following line to the definition of the bot:
+
+   ```
+   "processBehavior": "BUILD",
+   ```
+
+4. In the AWS CLI, build a new revision of the bot:
+
+   ```
+   aws lex-models put-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --cli-input-json file://OrderFlowersBot-V3.json
+   ```
+
+   The response from the server is:
+
+   ```
+   {
+       "status": "READY", 
+       "intents": [
+           {
+               "intentVersion": "$LATEST", 
+               "intentName": "OrderFlowers"
+           }
+       ], 
+       "name": "OrderFlowersBot", 
+       "locale": "en-US", 
+       "checksum": "checksum", 
+       "abortStatement": {
+           "messages": [
+               {
+                   "content": "Sorry, I'm not able to assist at this time", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "version": "$LATEST", 
+       "lastUpdatedDate": timestamp, 
+       "createdDate": timestamp, 
+       "clarificationPrompt": {
+           "maxAttempts": 2, 
+           "messages": [
+               {
+                   "content": "I didn't understand you, what would you like to do?", 
+                   "contentType": "PlainText"
+               }
+           ]
+       }, 
+       "voiceId": "Salli", 
+       "childDirected": false, 
+       "idleSessionTTLInSeconds": 600, 
+       "description": "Bot to order flowers on the behalf of a user"
+   }
+
+   ```
+
+## Next Step
+
+[Exercise 4: Publish a Version (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish.html)

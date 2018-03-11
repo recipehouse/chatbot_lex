@@ -1,0 +1,51 @@
+{
+    "confirmationPrompt": {
+        "maxAttempts": 2,
+        "messages": [
+            {
+                "content": "Okay, I will search for recipes with {IngredientType}. Does this sound okay?",
+                "contentType": "PlainText"
+            }
+        ]
+    },
+    "name": "ListIngredients",
+    "rejectionStatement": {
+        "messages": [
+            {
+                "content": "Okay, I will not search for recipes.",
+                "contentType": "PlainText"
+            }
+        ]
+    },
+    "sampleUtterances": [
+        "I would like some recipe suggestions",
+        "I would like to see some recipes",
+        "Give me some recipes"
+    ],
+    "slots": [
+        {
+            "slotType": "IngredientTypes",
+            "name": "IngredientType",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+                "maxAttempts": 2,
+                "messages": [
+                    {
+                        "content": "What ingredients do you have?",
+                        "contentType": "PlainText"
+                    }
+                ]
+            },
+            "priority": 1,
+            "slotTypeVersion": "$LATEST",
+            "sampleUtterances": [
+                "I have {IngredientType}"
+            ],
+            "description": "The ingredient to search up"
+        }
+    ],
+    "fulfillmentActivity": {
+        "type": "ReturnIntent"
+    },
+    "description": "Intent to provide a list of ingredients to search"
+}
