@@ -1,0 +1,33 @@
+{
+    "intents": [
+        {
+            "intentVersion": "$LATEST",
+            "intentName": "OrderFlowers"
+        }
+    ],
+    "name": "OrderFlowersBot",
+    "locale": "en-US",
+    "checksum": "705e34f6-bd04-4f7b-8d8c-5727e7cf49a0",
+    "abortStatement": {
+        "messages": [
+            {
+                "content": "Sorry, I'm not able to assist at this time",
+                "contentType": "PlainText"
+            }
+        ]
+    },
+    "clarificationPrompt": {
+        "maxAttempts": 2,
+        "messages": [
+            {
+                "content": "I didn't understand you, what would you like to do?",
+                "contentType": "PlainText"
+            }
+        ]
+    },
+    "voiceId": "Salli",
+    "processBehavior": "BUILD",
+    "childDirected": false,
+    "idleSessionTTLInSeconds": 600,
+    "description": "Bot to order flowers on the behalf of a user"
+}

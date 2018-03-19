@@ -1,0 +1,257 @@
+{
+    "enumerationValues": [
+        {
+            "value": "haddock"
+        }, 
+        {
+            "value": "leaf lettuce"
+        }, 
+        {
+            "value": "spinach"
+        }, 
+        {
+            "value": "chicken drumsticks"
+        }, 
+        {
+            "value": "chinese leaf"
+        }, 
+        {
+            "value": "cucumber"
+        }, 
+        {
+            "value": "corn"
+        }, 
+        {
+            "value": "lamb leg"
+        }, 
+        {
+            "value": "pak choi"
+        }, 
+        {
+            "value": "celeriac"
+        }, 
+        {
+            "value": "chicken thighs"
+        }, 
+        {
+            "value": "butternut squash"
+        }, 
+        {
+            "value": "lamb rump joint"
+        }, 
+        {
+            "value": "brussel sprouts"
+        }, 
+        {
+            "value": "kalettes"
+        }, 
+        {
+            "value": "lamb loin"
+        }, 
+        {
+            "value": "pork mince"
+        }, 
+        {
+            "value": "beef burger"
+        }, 
+        {
+            "value": "spring onion"
+        }, 
+        {
+            "value": "whole chicken"
+        }, 
+        {
+            "value": "beef rump steak"
+        }, 
+        {
+            "value": "parsnips"
+        }, 
+        {
+            "value": "chicken breast"
+        }, 
+        {
+            "value": "beef shank"
+        }, 
+        {
+            "value": "stringles beans"
+        }, 
+        {
+            "value": "basil"
+        }, 
+        {
+            "value": "salmon"
+        }, 
+        {
+            "value": "potatoe"
+        }, 
+        {
+            "value": "sweet gem lettucee"
+        }, 
+        {
+            "value": "baby potatoe"
+        }, 
+        {
+            "value": "pork rib"
+        }, 
+        {
+            "value": "yellow pepper"
+        }, 
+        {
+            "value": "tarragon"
+        }, 
+        {
+            "value": "pork loin"
+        }, 
+        {
+            "value": "ginger"
+        }, 
+        {
+            "value": "asparagus"
+        }, 
+        {
+            "value": "chicken mince"
+        }, 
+        {
+            "value": "aubergine"
+        }, 
+        {
+            "value": "beef sirloin steak"
+        }, 
+        {
+            "value": "beef ribeye"
+        }, 
+        {
+            "value": "red pepper"
+        }, 
+        {
+            "value": "cauliflower"
+        }, 
+        {
+            "value": "redarling sprout stalk"
+        }, 
+        {
+            "value": "romaine lettuce"
+        }, 
+        {
+            "value": "beef mince"
+        }, 
+        {
+            "value": "shrimp"
+        }, 
+        {
+            "value": "white cabbage"
+        }, 
+        {
+            "value": "red cabbage"
+        }, 
+        {
+            "value": "iceberg lettuce"
+        }, 
+        {
+            "value": "broccoli"
+        }, 
+        {
+            "value": "seasonal squash"
+        }, 
+        {
+            "value": "green beans"
+        }, 
+        {
+            "value": "swede"
+        }, 
+        {
+            "value": "thyme"
+        }, 
+        {
+            "value": "red onion"
+        }, 
+        {
+            "value": "parsley"
+        }, 
+        {
+            "value": "pork belly"
+        }, 
+        {
+            "value": "coriander"
+        }, 
+        {
+            "value": "sugarsnaps"
+        }, 
+        {
+            "value": "chives"
+        }, 
+        {
+            "value": "savoy cabbage"
+        }, 
+        {
+            "value": "chillies"
+        }, 
+        {
+            "value": "courgettes"
+        }, 
+        {
+            "value": "chicken wings"
+        }, 
+        {
+            "value": "garlic"
+        }, 
+        {
+            "value": "pork shoulder"
+        }, 
+        {
+            "value": "lamb mince"
+        }, 
+        {
+            "value": "lamb shoulder"
+        }, 
+        {
+            "value": "pointed cabbage"
+        }, 
+        {
+            "value": "prawn"
+        }, 
+        {
+            "value": "green pepper"
+        }, 
+        {
+            "value": "white onion"
+        }, 
+        {
+            "value": "leek"
+        }, 
+        {
+            "value": "lemon grass"
+        }, 
+        {
+            "value": "sweet potatoe"
+        }, 
+        {
+            "value": "runner beans"
+        }, 
+        {
+            "value": "butterhead lettuce"
+        }, 
+        {
+            "value": "mangetout"
+        }, 
+        {
+            "value": "cod"
+        }, 
+        {
+            "value": "carrot"
+        }, 
+        {
+            "value": "shallot"
+        }, 
+        {
+            "value": "chicken legs"
+        }
+    ], 
+    "name": "IngredientTypes", 
+    "checksum": "0fe199d9-5aff-4201-84e5-bcc7623fd69c", 
+    "version": "$LATEST", 
+    "lastUpdatedDate": 1520730449.542, 
+    "createdDate": 1520730449.542, 
+    "valueSelectionStrategy": "ORIGINAL_VALUE", 
+    "description": "Types of ingredients available to select"
+}

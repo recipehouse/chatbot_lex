@@ -1,0 +1,36 @@
+{
+    "status": "READY", 
+    "intents": [
+        {
+            "intentVersion": "4", 
+            "intentName": "ListIngredients"
+        }
+    ], 
+    "name": "ListIngredientsBot", 
+    "locale": "en-US", 
+    "checksum": "96bfa703-6dd0-4a96-ad1a-4053f3c94876", 
+    "abortStatement": {
+        "messages": [
+            {
+                "content": "Sorry, I'm not able to assist at this time", 
+                "contentType": "PlainText"
+            }
+        ]
+    }, 
+    "version": "$LATEST", 
+    "lastUpdatedDate": 1521426111.645, 
+    "createdDate": 1520732076.143, 
+    "clarificationPrompt": {
+        "maxAttempts": 2, 
+        "messages": [
+            {
+                "content": "I didn't understand you, what would you like to do?", 
+                "contentType": "PlainText"
+            }
+        ]
+    }, 
+    "voiceId": "Salli", 
+    "childDirected": false, 
+    "idleSessionTTLInSeconds": 600, 
+    "description": "Bot to get a list of ingredients from the user"
+}

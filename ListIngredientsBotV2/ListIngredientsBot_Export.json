@@ -1,0 +1,347 @@
+{
+  "metadata": {
+    "schemaVersion": "1.0",
+    "importType": "LEX",
+    "importFormat": "JSON"
+  },
+  "resource": {
+    "name": "ListIngredientsBot",
+    "version": "2",
+    "intents": [
+      {
+        "description": "Intent to provide a list of ingredients to search",
+        "rejectionStatement": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Okay, I will not search for recipes."
+            }
+          ]
+        },
+        "name": "ListIngredients",
+        "version": "2",
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-1:632964217550:function:ListIngredientsCodeHook",
+            "messageVersion": "1.0"
+          }
+        },
+        "sampleUtterances": [
+          "I would like some recipe suggestions",
+          "I would like to see some recipes",
+          "Give me some recipes"
+        ],
+        "slots": [
+          {
+            "name": "IngredientType",
+            "description": "The ingredient to search up",
+            "slotConstraint": "Required",
+            "slotType": "IngredientTypes",
+            "slotTypeVersion": "1",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What ingredient do you have?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "sampleUtterances": [
+              "I have {IngredientType}"
+            ]
+          }
+        ],
+        "confirmationPrompt": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Okay, I will search for recipes with {IngredientType}. Does this sound okay?"
+            }
+          ],
+          "maxAttempts": 2
+        }
+      }
+    ],
+    "slotTypes": [
+      {
+        "description": "Types of ingredients available to select",
+        "name": "IngredientTypes",
+        "version": "1",
+        "enumerationValues": [
+          {
+            "value": "haddock"
+          },
+          {
+            "value": "leaf lettuce"
+          },
+          {
+            "value": "spinach"
+          },
+          {
+            "value": "chicken drumsticks"
+          },
+          {
+            "value": "chinese leaf"
+          },
+          {
+            "value": "cucumber"
+          },
+          {
+            "value": "corn"
+          },
+          {
+            "value": "lamb leg"
+          },
+          {
+            "value": "pak choi"
+          },
+          {
+            "value": "celeriac"
+          },
+          {
+            "value": "chicken thighs"
+          },
+          {
+            "value": "butternut squash"
+          },
+          {
+            "value": "lamb rump joint"
+          },
+          {
+            "value": "brussel sprouts"
+          },
+          {
+            "value": "kalettes"
+          },
+          {
+            "value": "lamb loin"
+          },
+          {
+            "value": "pork mince"
+          },
+          {
+            "value": "beef burger"
+          },
+          {
+            "value": "spring onion"
+          },
+          {
+            "value": "whole chicken"
+          },
+          {
+            "value": "beef rump steak"
+          },
+          {
+            "value": "parsnips"
+          },
+          {
+            "value": "chicken breast"
+          },
+          {
+            "value": "beef shank"
+          },
+          {
+            "value": "stringles beans"
+          },
+          {
+            "value": "basil"
+          },
+          {
+            "value": "salmon"
+          },
+          {
+            "value": "potatoe"
+          },
+          {
+            "value": "sweet gem lettucee"
+          },
+          {
+            "value": "baby potatoe"
+          },
+          {
+            "value": "pork rib"
+          },
+          {
+            "value": "yellow pepper"
+          },
+          {
+            "value": "tarragon"
+          },
+          {
+            "value": "pork loin"
+          },
+          {
+            "value": "ginger"
+          },
+          {
+            "value": "asparagus"
+          },
+          {
+            "value": "chicken mince"
+          },
+          {
+            "value": "aubergine"
+          },
+          {
+            "value": "beef sirloin steak"
+          },
+          {
+            "value": "beef ribeye"
+          },
+          {
+            "value": "red pepper"
+          },
+          {
+            "value": "cauliflower"
+          },
+          {
+            "value": "redarling sprout stalk"
+          },
+          {
+            "value": "romaine lettuce"
+          },
+          {
+            "value": "beef mince"
+          },
+          {
+            "value": "shrimp"
+          },
+          {
+            "value": "white cabbage"
+          },
+          {
+            "value": "red cabbage"
+          },
+          {
+            "value": "iceberg lettuce"
+          },
+          {
+            "value": "broccoli"
+          },
+          {
+            "value": "seasonal squash"
+          },
+          {
+            "value": "green beans"
+          },
+          {
+            "value": "swede"
+          },
+          {
+            "value": "thyme"
+          },
+          {
+            "value": "red onion"
+          },
+          {
+            "value": "parsley"
+          },
+          {
+            "value": "pork belly"
+          },
+          {
+            "value": "coriander"
+          },
+          {
+            "value": "sugarsnaps"
+          },
+          {
+            "value": "chives"
+          },
+          {
+            "value": "savoy cabbage"
+          },
+          {
+            "value": "chillies"
+          },
+          {
+            "value": "courgettes"
+          },
+          {
+            "value": "chicken wings"
+          },
+          {
+            "value": "garlic"
+          },
+          {
+            "value": "pork shoulder"
+          },
+          {
+            "value": "lamb mince"
+          },
+          {
+            "value": "lamb shoulder"
+          },
+          {
+            "value": "pointed cabbage"
+          },
+          {
+            "value": "prawn"
+          },
+          {
+            "value": "green pepper"
+          },
+          {
+            "value": "white onion"
+          },
+          {
+            "value": "leek"
+          },
+          {
+            "value": "lemon grass"
+          },
+          {
+            "value": "sweet potatoe"
+          },
+          {
+            "value": "runner beans"
+          },
+          {
+            "value": "butterhead lettuce"
+          },
+          {
+            "value": "mangetout"
+          },
+          {
+            "value": "cod"
+          },
+          {
+            "value": "carrot"
+          },
+          {
+            "value": "shallot"
+          },
+          {
+            "value": "chicken legs"
+          }
+        ],
+        "valueSelectionStrategy": "ORIGINAL_VALUE"
+      }
+    ],
+    "voiceId": "Salli",
+    "childDirected": false,
+    "locale": "en-US",
+    "idleSessionTTLInSeconds": 600,
+    "description": "Bot to get a list of ingredients from the user",
+    "clarificationPrompt": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "I didn't understand you, what would you like to do?"
+        }
+      ],
+      "maxAttempts": 2
+    },
+    "abortStatement": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "Sorry, I'm not able to assist at this time"
+        }
+      ]
+    }
+  }
+}

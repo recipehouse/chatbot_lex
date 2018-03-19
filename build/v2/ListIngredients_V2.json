@@ -1,0 +1,59 @@
+{
+    "confirmationPrompt": {
+        "maxAttempts": 2, 
+        "messages": [
+            {
+                "content": "Okay, I will search for recipes with {IngredientType}. Does this sound okay?", 
+                "contentType": "PlainText"
+            }
+        ]
+    }, 
+    "name": "ListIngredients", 
+    "checksum": "28af73cf-cc70-46f8-8a5b-b3e1cc951e3c", 
+    "version": "$LATEST", 
+    "rejectionStatement": {
+        "messages": [
+            {
+                "content": "Okay, I will not search for recipes.", 
+                "contentType": "PlainText"
+            }
+        ]
+    }, 
+    "createdDate": 1520730465.742, 
+    "lastUpdatedDate": 1521392277.069, 
+    "sampleUtterances": [
+        "I would like some recipe suggestions", 
+        "I would like to see some recipes", 
+        "Give me some recipes"
+    ], 
+    "slots": [
+        {
+            "slotType": "IngredientTypes", 
+            "name": "IngredientType", 
+            "slotConstraint": "Required", 
+            "valueElicitationPrompt": {
+                "maxAttempts": 2, 
+                "messages": [
+                    {
+                        "content": "What ingredient do you have?", 
+                        "contentType": "PlainText"
+                    }
+                ]
+            }, 
+            "priority": 1, 
+            "slotTypeVersion": "1", 
+            "sampleUtterances": [
+                "I have {IngredientType}"
+            ], 
+            "description": "The ingredient to search up"
+        }
+    ], 
+    "fulfillmentActivity": {
+        "type": "CodeHook", 
+        "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-1:632964217550:function:ListIngredientsCodeHook", 
+            "messageVersion": "1.0"
+        }
+    }, 
+    "description": "Intent to provide a list of ingredients to search"
+}

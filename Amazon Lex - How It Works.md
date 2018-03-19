@@ -1034,7 +1034,7 @@ The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windo
        --statement-id LexGettingStarted-OrderFlowersBot ^
        --action lambda:InvokeFunction ^
        --principal lex.amazonaws.com ^
-       --source-arn "arn:aws:lex:eu-west-1:account ID:intent:OrderFlowers:.*"
+       --source-arn "arn:aws:lex:eu-west-1:632964217550:intent:OrderFlowers:.*"
    ```
 
    Lambda sends the following response:
@@ -1056,9 +1056,9 @@ The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windo
 
    ```
    aws lex-models get-intent ^
-       --region region ^
+       --region eu-west-1 ^
        --name OrderFlowers ^
-       --intent-version "^$LATEST" > OrderFlowers-V3.json
+       --intent-version "$LATEST" > OrderFlowers-V3.json
 
    ```
 
@@ -1072,7 +1072,7 @@ The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windo
           "fulfillmentActivity": {
               "type": "CodeHook",
               "codeHook": {
-                  "uri": "arn:aws:lambda:region:account ID:function:OrderFlowersCodeHook",
+                  "uri": "arn:aws:lambda:eu-west-1:632964217550:function:OrderFlowersCodeHook",
                   "messageVersion": "1.0"
               }
           }
@@ -1084,7 +1084,7 @@ The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windo
 
    ```
    aws lex-models put-intent ^
-       --region region ^
+       --region eu-west-1 ^
        --name OrderFlowers ^
        --cli-input-json file://OrderFlowers-V3.json
 
@@ -1098,9 +1098,9 @@ Now that you have updated the intent, rebuild the bot.
 
    ```
    aws lex-models get-bot ^
-       --region region ^
+       --region eu-west-1 ^
        --name OrderFlowersBot ^
-       --version-or-alias "\$LATEST" > OrderFlowersBot-V3.json
+       --version-or-alias "$LATEST" > OrderFlowersBot-V3.json
 
    ```
 
@@ -1115,9 +1115,9 @@ Now that you have updated the intent, rebuild the bot.
 4. In the AWS CLI, build a new revision of the bot:
 
    ```
-   aws lex-models put-bot \
-       --region region \
-       --name OrderFlowersBot \
+   aws lex-models put-bot ^
+       --region eu-west-1 ^
+       --name OrderFlowersBot ^
        --cli-input-json file://OrderFlowersBot-V3.json
    ```
 
@@ -1166,3 +1166,300 @@ Now that you have updated the intent, rebuild the bot.
 ## Next Step
 
 [Exercise 4: Publish a Version (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish.html)
+
+# Exercise 4: Publish a Version (AWS CLI)
+
+Now, create a version of the bot that you created in Exercise 1. A *version* is a snapshot of the bot. After you create a version, you can’t change it. The only version of a bot that you can update is the `$LATEST` version. For more information about versions, see [Versioning and Aliases](https://docs.aws.amazon.com/lex/latest/dg/versioning-aliases.html).
+
+Before you can publish a version of a bot, you must publish the intents that is uses. Likewise, you must publish the slot types that those intents refer to. In general, to publish a version of a bot, you do the following:
+
+1. Publish a version of a slot type with the [CreateSlotTypeVersion](https://docs.aws.amazon.com/lex/latest/dg/API_CreateSlotTypeVersion.html) operation.
+2. Publish a version of an intent with the [CreateIntentVersion](https://docs.aws.amazon.com/lex/latest/dg/API_CreateIntentVersion.html) operation.
+3. Publish a version of a bot with the [CreateBotVersion](https://docs.aws.amazon.com/lex/latest/dg/API_CreateBotVersion.html) operation .
+
+To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see [Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+- [Step 1: Publish the Slot Type (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish-slot-type.html)
+- [Step 2: Publish the Intent (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish-intent.html)
+- [Step 3: Publish the Bot (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish-bot.html)
+
+# Step 1: Publish the Slot Type (AWS CLI)
+
+Before you can publish a version of any intents that use a slot type, you must publish a version of that slot type. In this case, you publish the `FlowerTypes` slot type.
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST` and replace the backslash (\) continuation character at the end of each line with a caret (^).
+
+**To publish a slot type (AWS CLI)**
+
+1. In the AWS CLI, get the latest version of the slot type:
+
+   ```
+   aws lex-models get-slot-type ^
+       --region eu-west-1 ^
+       --name FlowerTypes ^
+       --slot-type-version "$LATEST"
+   ```
+
+   The response from Amazon Lex follows. Record the checksum for the current revision of the `$LATEST` version.
+
+   ```
+   {
+       "enumerationValues": [
+           {
+               "value": "tulips"
+           }, 
+           {
+               "value": "lilies"
+           }, 
+           {
+               "value": "roses"
+           }
+       ], 
+       "name": "FlowerTypes", 
+       "checksum": "checksum", 
+       "version": "$LATEST", 
+       "lastUpdatedDate": timestamp, 
+       "createdDate": timestamp, 
+       "description": "Types of flowers to pick up"
+   }
+   ```
+
+2. Publish a version of the slot type. Use the checksum that you recorded in the previous step.
+
+   ```
+   aws lex-models create-slot-type-version \
+       --region region \
+       --name FlowerTypes \
+       --checksum "checksum"
+   ```
+
+   The response from Amazon Lex follows. Record the version number for the next step.
+
+   ```
+   {
+       "version": "1", 
+       "enumerationValues": [
+           {
+               "value": "tulips"
+           }, 
+           {
+               "value": "lilies"
+           }, 
+           {
+               "value": "roses"
+           }
+       ], 
+       "name": "FlowerTypes", 
+       "createdDate": timestamp, 
+       "lastUpdatedDate": timestamp, 
+       "description": "Types of flowers to pick up"
+   }
+   ```
+
+# Step 2: Publish the Intent (AWS CLI)
+
+Before you can publish an intent, you have to publish all of the slot types referred to by the intent. The slot types must be numbered versions, not the `$LATEST` version.
+
+First, update the `OrderFlowers` intent to use the version of the `FlowerTypes` slot type that you published in the previous step. Then publish a new version of the `OrderFlowers` intent.
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST` and replace the backslash (\) continuation character at the end of each line with a caret (^).
+
+**To publish a version of an intent (AWS CLI)**
+
+1. In the AWS CLI, get the `$LATEST` version of the `OrderFlowers` intent and save it to a file:
+
+   ```
+   aws lex-models get-intent \
+       --region region \
+       --name OrderFlowers \
+       --intent-version "\$LATEST" > OrderFlowers_V4.json
+   ```
+
+2. In a text editor, open the **OrderFlowers_V4.json** file. Delete the `createdDate`, `lastUpdatedDate`, and `version` fields. Find the `FlowerTypes` slot type and change the version to the version number that you recorded in the previous step. The following fragment of the **OrderFlowers_V4.json** file shows the location of the change:
+
+   ```
+           {
+               "slotType": "FlowerTypes", 
+               "name": "FlowerType", 
+               "slotConstraint": "Required", 
+               "valueElicitationPrompt": {
+                   "maxAttempts": 2, 
+                   "messages": [
+                       {
+                           "content": "What type of flowers?", 
+                           "contentType": "PlainText"
+                       }
+                   ]
+               }, 
+               "priority": 1, 
+               "slotTypeVersion": "version", 
+               "sampleUtterances": []
+           }, 
+
+   ```
+
+3. In the AWS CLI, save the revision of the intent:
+
+   ```
+   aws lex-models put-intent \
+       --name OrderFlowers \
+       --cli-input-json file://OrderFlowers_V4.json
+   ```
+
+4. Get the checksum of the latest revision of the intent:
+
+   ```
+   aws lex-models get-intent \
+       --region region \
+       --name OrderFlowers \
+       --intent-version "\$LATEST" > OrderFlowers_V4a.json
+   ```
+
+   The following fragment of the response shows the checksum of the intent. Record this for the next step.
+
+   ```
+       "name": "OrderFlowers", 
+       "checksum": "checksum", 
+       "version": "$LATEST", 
+
+   ```
+
+5. Publish a new version of the intent:
+
+   ```
+   aws lex-models create-intent-version \
+       --region region \
+       --name OrderFlowers \
+       --checksum "checksum"
+   ```
+
+   The following fragment of the response shows the new version of the intent. Record the version number for the next step.
+
+   ```
+       "name": "OrderFlowers", 
+       "checksum": "checksum", 
+       "version": "version", 
+   ```
+
+# Step 3: Publish the Bot (AWS CLI)
+
+After you have published all of the slot types and intents that are used by your bot, you can publish the bot.
+
+Update the `OrderFlowersBot` bot to use the `OrderFlowers` intent that you updated in the previous step. Then, publish a new version of the`OrderFlowersBot` bot.
+
+Note
+
+The following AWS CLI example is formatted for Unix, Linux, and macOS. For Windows, change `"\$LATEST"` to `$LATEST` and replace the backslash (\) continuation character at the end of each line with a caret (^).
+
+**To publish a version of a bot (AWS CLI)**
+
+1. In the AWS CLI, get the `$LATEST` version of the `OrderFlowersBot` bot and save it to a file:
+
+   ```
+   aws lex-models get-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --version-or-alias "\$LATEST" > OrderFlowersBot_V4.json
+   ```
+
+2. In a text editor, open the **OrderFlowersBot_V4.json** file. Delete the `createdDate`, `lastUpdatedDate`, `status` and `version` fields. Find the`OrderFlowers` intent and change the version to the version number that you recorded in the previous step. The following fragment of**OrderFlowersBot_V4.json** shows the location of the change.
+
+   ```
+       "intents": [
+           {
+               "intentVersion": "version", 
+               "intentName": "OrderFlowers"
+           }
+   ```
+
+3. In the AWS CLI, save the new revision of the bot:
+
+   ```
+   aws lex-models put-bot \
+       --name OrderFlowersBot \
+       --cli-input-json file://OrderFlowersBot_V4.json
+   ```
+
+4. Get the checksum of the latest revision of the bot:
+
+   ```
+   aws lex-models get-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --version-or-alias "\$LATEST" > OrderFlowersBot_V4.json
+   ```
+
+   The following fragment of the response shows the checksum of the bot. Record this for the next step.
+
+   ```
+       "name": "OrderFlowersBot", 
+       "locale": "en-US", 
+       "checksum": "checksum", 
+   ```
+
+5. Publish a new version of the bot:
+
+   ```
+   aws lex-models create-bot-version \
+       --region region \
+       --name OrderFlowersBot \
+       --checksum "checksum"
+   ```
+
+   The following fragment of the response shows the new version of the bot.
+
+   ```
+       "checksum": "checksum", 
+       "abortStatement": {
+           ...
+       }, 
+       "version": "1",
+       "lastUpdatedDate": timestamp, 
+
+   ```
+
+# Exercise 5: Create an Alias (AWS CLI)
+
+An alias is a pointer to a specific version of a bot. With an alias you can easily update the version that your client applications are using. For more information, see [Versioning and Aliases](https://docs.aws.amazon.com/lex/latest/dg/versioning-aliases.html).To run the commands in this exercise, you need to know the region where the commands will be run. For a list of regions, see[Model Building Limits ](https://docs.aws.amazon.com/lex/latest/dg/gl-limits.html#gl-limits-model-building).
+
+**To create an alias (AWS CLI)**
+
+1. In the AWS CLI, get the version of the `OrderFlowersBot` bot that you created in [Exercise 4: Publish a Version (AWS CLI)](https://docs.aws.amazon.com/lex/latest/dg/gs-cli-publish.html).
+
+   ```
+   aws lex-models get-bot \
+       --region region \
+       --name OrderFlowersBot \
+       --version-or-alias version > OrderFlowersBot_V5.json
+   ```
+
+2. In a text editor, open **OrderFlowersBot_v5.json**. Find and record the version number.
+
+3. In the AWS CLI, create the bot alias:
+
+   ```
+   aws lex-models put-bot-alias  \
+       --region region \
+       --name PROD \
+       --bot-name OrderFlowersBot \
+       --bot-version version
+   ```
+
+   The following is the reponse from the server:
+
+   ```
+   {
+       "name": "PROD",
+       "createdDate": timestamp,
+       "checksum": "checksum",
+       "lastUpdatedDate": timestamp,
+       "botName": "OrderFlowersBot",
+       "botVersion": "1"
+   }}                    
+                   
+   ```
+
